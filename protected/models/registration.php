@@ -5,13 +5,12 @@ error_reporting(E_ALL);
 * @author Awe_Kyle <kyle.voronin@gmail.com>
 * @version 1.0
 */
-class Registration
+class Registration implements CheckInpValues
 {
 	public $login;
 	public $pass;
 	private $confirm_pass;
 	private $email;
-	public $err = array();
 
 	function __construct($login, $pass, $confirm_pass = null, $email = null)
 	{
@@ -21,7 +20,7 @@ class Registration
 		$this->email = $email;
 	}
 
-	protected function checkInpValue()
+	public function checkInpValue()
 	{
 		$this->email = filter_var($this->email, FILTER_VALIDATE_EMAIL);
 		if ($this->email === false) {
@@ -42,6 +41,15 @@ class Registration
 			$this->err[] = "Password and password2 is not compatible";
 		}
 
+		$c = DB::getConn();
+		$is_uniq = $c->prepare("SELECT `user_id` FROM `my_blog`.`users` 
+								WHERE `login` = :login");
+		$is_uniq->execute(array(':login'=>$this->login));
+		if ($is_uniq->rowCount() !== 0) {
+			$this->err[] = "Login is existing!";
+		}
+
+
 		return $this->err;
 	}
 
@@ -51,7 +59,8 @@ class Registration
 			$c = DB::getConn();
 			$this->pass = md5(md5($this->pass));
 			try {
-				$add_user = $c->prepare("INSERT INTO `my_blog`.`users` SET `login` = :login, `password` = :pass, `email` = :email");
+				$add_user = $c->prepare("INSERT INTO `my_blog`.`users` 
+											SET `login` = :login, `password` = :pass, `email` = :email");
 				$exec = $add_user->execute(array(":login"=>$this->login, ":pass"=>$this->pass, ":email"=>$this->email));
 			}
 			catch (PDOException $e) {
