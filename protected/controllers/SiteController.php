@@ -14,12 +14,14 @@ function __autoload($class_name)
 	$file = site_path . DIRSEP . 'models' . DIRSEP . $filename;
 	if (file_exists($file) == false) {
 		return false;
-	} else {
+	} 
+	else {
 		include $file;
 	}
 }
 
-__autoload("DB");
+__autoload('DB');
+__autoload('CheckValues');
 
 if (isset($_POST['registration'])) {
 	__autoload('Registration');
