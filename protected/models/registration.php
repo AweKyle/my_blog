@@ -7,8 +7,8 @@ error_reporting(E_ALL);
 */
 class Registration implements CheckInpValues
 {
-	public $login;
-	public $pass;
+	private $login;
+	private $pass;
 	private $confirm_pass;
 	private $email;
 
