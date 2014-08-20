@@ -5,8 +5,8 @@ error_reporting(E_ALL);
 */
 class Authorization implements CheckInpValues
 {
-	public $user_hash;
-	public $user_id;
+	private $user_hash;
+	private $user_id;
 
 	public function checkInpValue()
 	{
